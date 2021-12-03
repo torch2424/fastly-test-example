@@ -1,0 +1,19 @@
+# This file describes a Fastly Compute@Edge package. To learn more visit:
+# https://developer.fastly.com/reference/fastly-toml/
+
+authors = ["dummy"]
+description = "The routing for our test platform"
+language = "assemblyscript"
+manifest_version = 2
+name = "test"
+
+[local_server]
+  [local_server.backends]
+    [local_server.backends."testing.local"]
+      url = "http://testing.local:8080"
+    [local_server.backends."cache-testing.local"]
+      url = "http://cache-testing.local:8080"
+  [local_server.dictionaries]
+    [local_server.dictionaries.environment]
+      file = "environment.json"
+      format = "json"
