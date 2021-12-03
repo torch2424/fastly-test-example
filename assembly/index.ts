@@ -30,9 +30,9 @@ function main(req: Request): Response {
 
     // handle cache url requests
     if (url.hostname == env_cache_backend) {
-        logEndpoint.log("using cache backend: " + env_cache_backend); 
+        logEndpoint.log("using cache backend (hardcode below): " + env_cache_backend); 
         let beresp = Fastly.fetch(req, {
-            backend: env_cache_backend,
+            backend: "cache-testing.local",
             cacheOverride: null,
         }).wait();
 
