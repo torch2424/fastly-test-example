@@ -6,33 +6,36 @@ function main(req: Request): Response {
 
     let logEndpoint = Fastly.getLogEndpoint("AssemblyscriptLog");
 
+    logEndpoint.log("Logs!");
+
     // get config
+    logEndpoint.log("Opening dictionary!");
     let env = new Fastly.Dictionary("environment");
     let env_cache_backend = ""; // default to nothing
     let env_backend = ""; // default to nothing
+    logEndpoint.log("Getting cache_backend!");
     if (env.contains("cache_backend")) {
         let valueOrNull = env.get("cache_backend");
         if (valueOrNull != null) {
             env_cache_backend = changetype<string>(valueOrNull);
-            logEndpoint.log("got env_cache_backend from dictionary: " + env_cache_backend); 
+            logEndpoint.log("Got cache_backend! " + env_cache_backend);
         }
     }
+    logEndpoint.log("Getting backend!");
     if (env.contains("backend")) {
         let valueOrNull = env.get("backend");
         if (valueOrNull != null) {
             env_backend = changetype<string>(valueOrNull);
-            logEndpoint.log("got backend from dictionary: " + env_backend); 
-        }
+            logEndpoint.log("Got backend! " + env_backend);
+        }    
     }
 
-    logEndpoint.log("env_cache_backend: " + env_cache_backend); 
-    logEndpoint.log("env_backend: " + env_backend); 
-
     // handle cache url requests
-    if (url.hostname == env_cache_backend) {
-        logEndpoint.log("using cache backend (hardcode below): " + env_cache_backend); 
+    if (url.hostname == env_cache_backend || true) {
+        logEndpoint.log("Handle cache url requests");
+        logEndpoint.log("Using: " + env_cache_backend);
         let beresp = Fastly.fetch(req, {
-            backend: "cache-testing.local",
+            backend: env_cache_backend, // "cache-testing.local" env_cache_backend
             cacheOverride: null,
         }).wait();
 
@@ -42,7 +45,6 @@ function main(req: Request): Response {
 
     // Do a regular (with cache) lookup for all other request
 
-    logEndpoint.log("using default backend: " + env_backend); 
     let beresp = Fastly.fetch(req, {
         backend: env_backend,
         cacheOverride: null,
