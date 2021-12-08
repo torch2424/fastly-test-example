@@ -18,6 +18,8 @@ function main(req: Request): Response {
         let valueOrNull = env.get("cache_backend");
         if (valueOrNull != null) {
             env_cache_backend = changetype<string>(valueOrNull);
+            // FIX: This creates a copy of the string, and won't get overwritten by AS GC
+            env_cache_backend = env_cache_backend.slice(0);
             logEndpoint.log("Got cache_backend! " + env_cache_backend);
         }
     }
@@ -26,6 +28,8 @@ function main(req: Request): Response {
         let valueOrNull = env.get("backend");
         if (valueOrNull != null) {
             env_backend = changetype<string>(valueOrNull);
+            // FIX: This creates a copy of the string, and won't get overwritten by AS GC
+            env_backend = env_backend.slice(0);
             logEndpoint.log("Got backend! " + env_backend);
         }    
     }
@@ -33,11 +37,13 @@ function main(req: Request): Response {
     // handle cache url requests
     if (url.hostname == env_cache_backend || true) {
         logEndpoint.log("Handle cache url requests");
+        logEndpoint.log("URL: " + url.href);
         logEndpoint.log("Using: " + env_cache_backend);
         let beresp = Fastly.fetch(req, {
             backend: env_cache_backend, // "cache-testing.local" env_cache_backend
             cacheOverride: null,
         }).wait();
+        logEndpoint.log("Done!");
 
         // Send the response back to the client.
         return beresp
