@@ -19,25 +19,41 @@ function main(req: Request): Response {
         if (valueOrNull != null) {
             env_cache_backend = changetype<string>(valueOrNull);
             // FIX: This creates a copy of the string, and won't get overwritten by AS GC
-            env_cache_backend = env_cache_backend.slice(0);
+            // env_cache_backend = env_cache_backend.slice(0);
             logEndpoint.log("Got cache_backend! " + env_cache_backend);
         }
     }
     logEndpoint.log("Getting backend!");
+    console.log("Yooo " + env_cache_backend);
     if (env.contains("backend")) {
+        console.log("Yooo " + env_cache_backend);
+
         let valueOrNull = env.get("backend");
+        console.log("Yooo " + env_cache_backend);
+
         if (valueOrNull != null) {
             env_backend = changetype<string>(valueOrNull);
+            console.log("Yooo " + env_cache_backend);
+
             // FIX: This creates a copy of the string, and won't get overwritten by AS GC
-            env_backend = env_backend.slice(0);
+            // env_backend = env_backend.slice(0);
             logEndpoint.log("Got backend! " + env_backend);
         }    
     }
 
     // handle cache url requests
-    if (url.hostname == env_cache_backend || true) {
+    console.log("Yooo " + env_cache_backend);
+
+    if (url.hostname === env_cache_backend || true) {
+        console.log("Yooo " + env_cache_backend);
+
         logEndpoint.log("Handle cache url requests");
-        logEndpoint.log("URL: " + url.href);
+        console.log("Yooo " + env_cache_backend);
+
+        logEndpoint.log("URL: " + url.hostname);
+        let testing = String.fromCharCode(55)
+        console.log("Yooo " + testing + env_cache_backend);
+
         logEndpoint.log("Using: " + env_cache_backend);
         let beresp = Fastly.fetch(req, {
             backend: env_cache_backend, // "cache-testing.local" env_cache_backend
